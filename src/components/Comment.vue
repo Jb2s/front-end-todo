@@ -37,7 +37,7 @@ const formatTimeStamp = (timestamp) => new Date(timestamp).toLocaleString('fr-FR
         <span v-if="isMineComment" class="text-xs text-indigo-600 ">Moi</span>
         <span v-else class="text-xs text-gray-600">{{ comment.user.username }}</span>
       </div>
-      <p>{{ comment.content }}</p>
+      <p class="break-words max-w-full whitespace-pre-wrap">{{ comment.content }}</p>
       <span class="block text-xs mt-1" :class="[ isMineComment ? 'text-indigo-400':'text-gray-400']">
         <small>{{ formatTimeStamp(comment.createdAt) }}</small>
       </span>

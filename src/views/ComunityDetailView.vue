@@ -2,7 +2,7 @@
   <div class="flex flex-col h-screen bg-gray-100">
     <div class="flex-1 flex flex-col">
       <div class="p-4 border-b flex items-center gap-3 bg-white sticky top-0 z-10">
-        <h2 class="font-semibold text-base sm:text-lg md:text-xl">Tâche ID: {{ taskId }}</h2>
+        <h2 class="font-semibold text-base sm:text-lg md:text-xl">Vous etes sur : {{ titleTask }}</h2>
       </div>
 
       <div class="flex-1 overflow-y-auto p-4">
@@ -40,6 +40,7 @@ const route = useRoute();
 const taskId = ref(route.params.id);
 const authStore = useAuthStore();
 const taskStore = useTaskStore();
+const titleTask = ref();
 
 const { proxy } = getCurrentInstance();
 const socketStatus = ref('Déconnecté');
@@ -59,6 +60,7 @@ const loadCommentToTasks = async () => {
     try {
       const result = await getCommentsToTask(taskId.value, token);
       console.log('result', result);
+      titleTask.value = result.task.title;
       taskStore.setCommentsToTask(result.task.comments);
 
       console.log('taskStore.allCommentsToTask', taskStore.allCommentsToTask);
