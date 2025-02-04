@@ -2,7 +2,7 @@
   <div class="flex flex-col h-screen bg-gray-100">
     <div class="flex-1 flex flex-col">
       <div class="p-4 border-b flex items-center gap-3 bg-white sticky top-0 z-10">
-        <h2 class="font-semibold text-base sm:text-lg md:text-xl">Vous Êtes sur : {{ result.task.title }}</h2>
+        <h2 class="font-semibold text-base sm:text-lg md:text-xl">Tâche ID: {{ taskId }}</h2>
       </div>
 
       <div class="flex-1 overflow-y-auto p-4">
