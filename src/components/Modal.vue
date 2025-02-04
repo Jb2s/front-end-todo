@@ -44,7 +44,7 @@
 import { ref, defineProps, watch, defineEmits } from 'vue';
 import { useAuthStore } from '@/stores/authStore';
 import { toggleSubTask,removeSubTask } from '@/services/subtaskServices';
-import { manageErrorCodeTaskAndSubtask } from '@/utils/manageUtils';
+import { manageErrorCodeTaskAndSubtask } from '../utils/manageUtils';
 import { useTaskStore } from '@/stores/taskStore';
 
 const props = defineProps({
