@@ -1,96 +1,101 @@
 <template>
   <div class="p-5">
-    <button
-      class="mb-3 rounded-lg px-3 py-1 bg-red-500 text-white font-bold"
-      v-if="isEditing"
-      @click="handleSuspendEditTask"
-    >
-      <i class="fas fa-times"></i>
-    </button>
-
-    <div
-      :class="[
-        'add-task-form',
-        'bg-gray-100',
-        'border',
-        'border-gray-300',
-        'rounded-lg',
-        'p-5',
-        'mb-4',
-        'shadow-sm',
-        'w-full',
-        'mx-auto',
-        { editing: isEditing },
-      ]"
-      class="max-w-4xl mb-2"
-    >
-      <label for="tâche" class="block text-sm font-medium text-gray-700">Tâche</label>
-
-      <input
-        v-model="newTask.title"
-        class="border border-indigo-100 p-2 rounded w-full focus:z-10 focus:ring-2 focus:ring-indigo-500 focus:outline-none',"
-      />
-
-      <label for="Description" class="block text-sm font-medium text-gray-700">Description</label>
-      <textarea
-        v-model="newTask.description"
-        class="border border-indigo-100 p-2 rounded w-full mt-3 focus:z-10 focus:ring-2 focus:ring-indigo-500 focus:outline-none',"
-      />
-
-      <div class="mt-2">
-        <div v-for="(subTask, index) in newTask.subTasks" :key="index" class="mb-3">
-          <label for="Sous tâche" class="block text-sm font-medium text-gray-700">Sous tâche</label>
-          <input
-            v-model="subTask.title"
-            class="border border-indigo-100 p-2 rounded w-full focus:z-10 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-          />
-        </div>
-
-        <div class="flex space-x-3 w-full">
-          <button
-            @click="handleAddDetailTask"
-            class="bg-indigo-200 text-indigo-900 text-sm font-medium px-4 py-2 rounded-sm hover:bg-indigo-300 transition flex-[0.4]"
-          >
-            Ajouter une todo
-          </button>
-          <button
-            @click="handleSaveNewTask"
-            class="bg-indigo-200 text-indigo-900 font-medium text-sm px-4 py-2 rounded-sm hover:bg-indigo-300 transition flex-[0.6]"
-          >
-            Sauvegarder
-          </button>
-        </div>
-      </div>
+    <div v-if="isLoading" class="flex items-center justify-center min-h-screen bg-gray-100">
+      <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-indigo-500"></div>
     </div>
+    <div v-else>
+      <button
+        class="mb-3 rounded-lg px-3 py-1 bg-red-500 text-white font-bold"
+        v-if="isEditing"
+        @click="handleSuspendEditTask"
+      >
+        <i class="fas fa-times"></i>
+      </button>
 
-    <div
-      class="task-list bg-gray-100 border border-gray-300 rounded-lg p-5 shadow-sm w-full mx-auto"
-    >
-      <div class="flex flex-col items-center mb-4">
-        <h1 class="text-lg font-bold text-gray-800">Liste des Tâches ({{ per }}% Complètes)</h1>
-        <div class="w-40 bg-yellow-200 rounded-full h-1.5 mt-2">
-          <div
-            class="bg-green-300 h-1.5 rounded-full"
-            :style="{ width: per + '%', transition: 'all 0.3s ease' }"
-          ></div>
-        </div>
-      </div>
+      <div
+        :class="[
+          'add-task-form',
+          'bg-gray-100',
+          'border',
+          'border-gray-300',
+          'rounded-lg',
+          'p-5',
+          'mb-4',
+          'shadow-sm',
+          'w-full',
+          'mx-auto',
+          { editing: isEditing },
+        ]"
+        class="max-w-4xl mb-2"
+      >
+        <label for="tâche" class="block text-sm font-medium text-gray-700">Tâche</label>
 
-      <div v-if="taskStore.taskList.length">
-        <div class="justify-center">
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div v-for="task in taskStore.taskList" :key="task.id" class="mb-4">
-              <TodoTask :item="task" @clickOnTask="openModal(task)" @edit="loadEditTask" />
-            </div>
+        <input
+          v-model="newTask.title"
+          class="border border-indigo-100 p-2 rounded w-full focus:z-10 focus:ring-2 focus:ring-indigo-500 focus:outline-none',"
+        />
+
+        <label for="Description" class="block text-sm font-medium text-gray-700">Description</label>
+        <textarea
+          v-model="newTask.description"
+          class="border border-indigo-100 p-2 rounded w-full mt-3 focus:z-10 focus:ring-2 focus:ring-indigo-500 focus:outline-none',"
+        />
+
+        <div class="mt-2">
+          <div v-for="(subTask, index) in newTask.subTasks" :key="index" class="mb-3">
+            <label for="Sous tâche" class="block text-sm font-medium text-gray-700">Sous tâche</label>
+            <input
+              v-model="subTask.title"
+              class="border border-indigo-100 p-2 rounded w-full focus:z-10 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+            />
+          </div>
+
+          <div class="flex space-x-3 w-full">
+            <button
+              @click="handleAddDetailTask"
+              class="bg-indigo-200 text-indigo-900 text-sm font-medium px-4 py-2 rounded-sm hover:bg-indigo-300 transition flex-[0.4]"
+            >
+              Ajouter une todo
+            </button>
+            <button
+              @click="handleSaveNewTask"
+              class="bg-indigo-200 text-indigo-900 font-medium text-sm px-4 py-2 rounded-sm hover:bg-indigo-300 transition flex-[0.6]"
+            >
+              Sauvegarder
+            </button>
           </div>
         </div>
       </div>
-      <div v-else class="no-tasks text-center">
-        <img class="task-image max-w-full h-auto" src="@/assets/koala.png" alt="Image" />
-        <p>Aucune tâche disponible.</p>
+
+      <div
+        class="task-list bg-gray-100 border border-gray-300 rounded-lg p-5 shadow-sm w-full mx-auto"
+      >
+        <div class="flex flex-col items-center mb-4">
+          <h1 class="text-lg font-bold text-gray-800">Liste des Tâches ({{ per }}% Complètes)</h1>
+          <div class="w-40 bg-yellow-200 rounded-full h-1.5 mt-2">
+            <div
+              class="bg-green-300 h-1.5 rounded-full"
+              :style="{ width: per + '%', transition: 'all 0.3s ease' }"
+            ></div>
+          </div>
+        </div>
+
+        <div v-if="taskStore.taskList.length">
+          <div class="justify-center">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div v-for="task in taskStore.taskList" :key="task.id" class="mb-4">
+                <TodoTask :item="task" @clickOnTask="openModal(task)" @edit="loadEditTask" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div v-else class="no-tasks text-center">
+          <img class="task-image max-w-full h-auto" src="@/assets/koala.png" alt="Image" />
+          <p>Aucune tâche disponible.</p>
+        </div>
       </div>
+      <Modal v-if="isModalOpen" :task="taskStore.selectedTask" @close="closeModal" />
     </div>
-    <Modal v-if="isModalOpen" :task="taskStore.selectedTask" @close="closeModal" />
   </div>
 </template>
 
@@ -108,6 +113,7 @@ const newTask = ref({ title: '', description: '', subTasks: [{ title: '' }] })
 const isModalOpen = ref(false)
 const isEditing = ref(false)
 const taskStore = useTaskStore()
+const isLoading = ref(true);
 const per = computed(() => taskStore.getPercentage)
 const openModal = (task) => {
   console.log('task', task)
@@ -234,6 +240,11 @@ const resetNewTask = () => {
   newTask.value.subTasks = [{ title: '' }]
 }
 onMounted(async () => {
+
+
+  setTimeout(() => {
+    isLoading.value = false;
+  }, 2000);
   await loadTasks()
   // socket.on('task_updated', loadTasks);
   // console.log('socket',socket);

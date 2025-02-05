@@ -1,30 +1,36 @@
 <template>
-  <div class="flex flex-col h-screen bg-gray-100">
-    <div class="flex-1 flex flex-col">
-      <div class="p-4 border-b flex items-center gap-3 bg-white sticky top-0 z-10">
-        <h2 class="font-semibold text-base sm:text-lg md:text-xl">Vous etes sur : {{ titleTask }}</h2>
-      </div>
+    <div v-if="isLoading" class="flex items-center justify-center min-h-screen bg-gray-100">
+      <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-indigo-500"></div>
+    </div>
+    <div v-else>
+      <div class="flex flex-col h-screen bg-gray-100">
+        <div class="flex-1 flex flex-col">
+          <div class="p-4 border-b flex items-center gap-3 bg-white sticky top-0 z-10">
+            <h2 class="font-semibold text-base sm:text-lg md:text-xl">Vous êtes sur : {{ titleTask }}</h2>
+          </div>
 
-      <div class="flex-1 overflow-y-auto p-4">
-        <Comment
-          v-for="comment in taskStore.allCommentsToTask"
-          :key="comment.id"
-          :comment="comment"
-          :currentUserId="authStore.UID"
-        />
-      </div>
+          <div class="flex-1 overflow-y-auto p-4">
+            <Comment
+              v-for="comment in taskStore.allCommentsToTask"
+              :key="comment.id"
+              :comment="comment"
+              :currentUserId="authStore.UID"
+            />
+          </div>
 
-      <div class="p-4 border-t bg-white sticky bottom-0 z-10">
-        <input
-          v-model="newComment.content"
-          @keyup.enter="sendMessage"
-          type="text"
-          placeholder="Discuter sur cette tâche..."
-          class="w-full p-2 sm:p-3 md:p-4 border rounded-xl text-sm sm:text-base md:text-lg focus:outline-none focus:ring focus:ring-indigo-300"
-        />
+          <div class="p-4 border-t bg-white sticky bottom-0 z-10">
+            <input
+              v-model="newComment.content"
+              @keyup.enter="sendMessage"
+              type="text"
+              placeholder="Discuter sur cette tâche..."
+              class="w-full p-2 sm:p-3 md:p-4 border rounded-xl text-sm sm:text-base md:text-lg focus:outline-none focus:ring focus:ring-indigo-300"
+            />
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+  
 </template>
   
  <script setup>
@@ -41,6 +47,8 @@ const taskId = ref(route.params.id);
 const authStore = useAuthStore();
 const taskStore = useTaskStore();
 const titleTask = ref();
+const isLoading = ref(true);
+
 
 const { proxy } = getCurrentInstance();
 const socketStatus = ref('Déconnecté');
@@ -115,6 +123,9 @@ watch(
 
 
 onMounted(async () => {
+  setTimeout(() => {
+    isLoading.value = false;
+  }, 2000);
   await loadCommentToTasks();
 console.log('authStore.UID', authStore.UID)
   proxy.$socket.connect();
